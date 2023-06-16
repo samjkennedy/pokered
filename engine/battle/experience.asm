@@ -129,7 +129,7 @@ GainExperience:
 	cp d ; d == level cap
 	jr nz, .skipOverwrite
 	;overwrite the experience to 0 since we're at the cap
-	ld a, 0
+	xor a
 	ld [wExpAmountGained], a
 	ld [wExpAmountGained + 1], a
 .skipOverwrite
