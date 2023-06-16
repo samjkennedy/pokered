@@ -89,6 +89,7 @@ GainExperience:
 	inc hl
 	inc hl
 	inc hl
+
 ; add the gained exp to the party mon's exp
 	ld b, [hl]
 	ldh a, [hQuotient + 3]
@@ -116,11 +117,25 @@ GainExperience:
 	ld a, [hl] ; species
 	ld [wd0b5], a
 	call GetMonHeader
+
 	;ld d, MAX_LEVEL
+	;new
 	farcall SetLevelLimit ;temp for existing saves
-	ld hl, wLevelLimit
-	ld d, [hl]
-	;TODO: make it so if you're at the limit, it gives no exp
+	ld d, wLevelLimit
+
+	ld e, a ;a seemed important, save the value
+
+	ld a, [wBattleMonLevel] ;a = current level
+	cp d ; d == level cap
+	jr nz, .skipOverwrite
+	;overwrite the experience to 0 since we're at the cap
+	ld a, 0
+	ld [wExpAmountGained], a
+	ld [wExpAmountGained + 1], a
+.skipOverwrite
+	ld a, e ;Put a back
+	;end new
+
 	callfar CalcExperience ; get max exp
 ; compare max exp with current exp
 	ldh a, [hExperience]
